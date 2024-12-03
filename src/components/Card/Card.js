@@ -20,10 +20,10 @@ const Card = ({ item }) => {
   const locationText = location.length > 5 ? location.slice(0, 5) + '...' : location;
 
   useEffect(() => {
-    console.log('Starting geocoding request...');
+    // console.log('Starting geocoding request...');
     const fetchLocation = async (store) => {
       const { latitude, longitude } = store;
-      console.log('Location:', latitude, longitude);
+      // console.log('Location:', latitude, longitude);
       if (latitude && longitude) {
         try {
           const response = await fetch(`https://api.openrouteservice.org/geocode/reverse?point.lat=${latitude}&point.lon=${longitude}&api_key=${API_KEY}`);
@@ -85,7 +85,7 @@ const Card = ({ item }) => {
   };
 
   const handlePress = () => {
-    console.log("Navigating to Details for productId:", item.id);
+    // console.log("Navigating to Details for productId:", item.id);
     navigation.navigate("Details", {
       productId: item.id,
     });

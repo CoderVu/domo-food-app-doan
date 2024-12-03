@@ -5,7 +5,8 @@ import { TabView } from "react-native-tab-view";
 import { fetchAllCategories } from '../Redux/Action/categoryActions';
 import CategoryItems from "../CategoryItems/CategoryItems";
 import TabBar from "./TabBar";
-const Tab = () => {
+
+const TabViewComponent = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const dispatch = useDispatch();
@@ -20,12 +21,10 @@ const Tab = () => {
   useEffect(() => {
     if (dataCategories.length > 0) {
       setRoutes(
-        dataCategories
-          .filter(category => category) 
-          .map((category) => ({
-            key: category.categoryId.toString(),
-            title: category.categoryName,
-          }))
+        dataCategories.map((category) => ({
+          key: category.categoryId.toString(),
+          title: category.categoryName,
+        }))
       );
     }
   }, [dataCategories]);
@@ -33,9 +32,7 @@ const Tab = () => {
   const handleIndexChange = (index) => {
     setIndex(index);
     const selectedRoute = routes[index];
-    if (selectedRoute) {
-      console.log("Selected Category ID ben tabview:", selectedRoute.key);
-    }
+ 
   };
 
   if (loading) {
@@ -51,7 +48,9 @@ const Tab = () => {
       <TabView
         renderTabBar={(props) => <TabBar {...props} />}
         navigationState={{ index, routes }}
-        renderScene={({ route }) => <CategoryItems categoryId={route.key} />}
+        renderScene={({ route }) => {
+          return <CategoryItems categoryId={route.key} />;
+        }}
         onIndexChange={handleIndexChange}
         initialLayout={{ width: layout.width }}
         sceneContainerStyle={styles.sceneContainer}
@@ -59,8 +58,6 @@ const Tab = () => {
     </View>
   );
 };
-
-export default Tab;
 
 const styles = StyleSheet.create({
   container: {
@@ -70,3 +67,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default TabViewComponent;

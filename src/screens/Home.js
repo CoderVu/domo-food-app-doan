@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Animated, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Screen from "../components/Screen/Screen";
 import PromotionCard from "../components/PromotionCard/PromotionCard";
-import SectionTitle from "../components/SectionTitle/SectionTitle";
-import TabView from "../components/TabView/TabView";
+import TabViewComponent from "../components/TabView/TabView";
 import SearchHeader from "../components/SearchHeader/SearchHeader";
 import { fetchProductBySearch } from "../components/Redux/Action/productActions";
 import CardSearch from "../components/Card/CardSearch";
 import AppFooter from "../components/common/AppFooter";
+import Icon from "react-native-vector-icons/MaterialIcons"; 
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const searchResults = useSelector((state) => state.product.allProductsBySearchQuery);
   const loading = useSelector((state) => state.product.loading);
   const error = useSelector((state) => state.product.error);
-  console.log('searchResults:', searchResults);
-  console.log('loading:', loading);
-  console.log('error:', error);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
   const cardSearchRef = useRef(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const headerVisibility = useRef(new Animated.Value(1)).current;
 
   const slides = [
     {
@@ -66,28 +65,57 @@ const Home = ({ navigation }) => {
 
   const isSearching = searchQuery && results.length > 0;
 
+  const headerHeight = headerVisibility.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 200], 
+  });
+
+  const headerOpacity = headerVisibility.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1], 
+  });
+
+  const toggleHeaderVisibility = () => {
+    Animated.timing(headerVisibility, {
+      toValue: headerVisibility.__getValue() === 1 ? 0 : 1, 
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
   return (
     <Screen>
       <SearchHeader onSearch={handleSearch} />
       <View style={styles.container}>
-      <PromotionCard slides={slides} />
+        <Animated.View style={[styles.header, { height: headerHeight, opacity: headerOpacity }]}>
+          <PromotionCard slides={slides} />
+        </Animated.View>
+
+        {/* Arrow button to toggle visibility of PromotionCard */}
+        <TouchableOpacity style={styles.toggleButton} onPress={toggleHeaderVisibility}>
+          <Icon
+            name={headerVisibility.__getValue() === 1 ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+            size={30}
+            color="white" // White for visibility on purple background
+          />
+        </TouchableOpacity>
 
         {!isSearching && (
           <View style={styles.categories}>
-            <SectionTitle title="Danh mục sản phẩm" popular />
-             <TabView />
+            <TabViewComponent />
           </View>
         )}
-
+        
         {isSearching && (
           <View style={styles.searchResults}>
             <CardSearch
               ref={cardSearchRef}
               items={results}
-              nestedScrollEnabled={true} 
+              nestedScrollEnabled={true}
             />
           </View>
         )}
+
         {loading && <Text>Loading...</Text>}
         {error && <Text>Error: {error}</Text>}
       </View>
@@ -96,11 +124,21 @@ const Home = ({ navigation }) => {
   );
 };
 
-export default Home;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    overflow: 'hidden',
+  },
+  toggleButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 2,  // Ensure the button is on top
+    backgroundColor: "#7b61ff", // Purple background
+    padding: 10,
+    borderRadius: 30,  // Circular button
   },
   categories: {
     paddingHorizontal: 10,
@@ -111,3 +149,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default Home;

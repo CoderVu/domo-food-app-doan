@@ -26,7 +26,7 @@ const addProductToCartService = (productId, quantity, storeId, size, status) => 
     });
 }
 const addComboToCartService = (comboId, quantity, storeId, size, status, drinkIdAction) => {
-    console.log('drinkdjfsjfs:', drinkIdAction);
+    //console.log('drinkdjfsjfs:', drinkIdAction);
     return instance({
         method: 'post',
         url: '/api/v1/user/cart/add/combo',

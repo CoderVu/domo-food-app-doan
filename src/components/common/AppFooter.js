@@ -24,7 +24,7 @@ const AppFooter = ({ navigation: propNavigation }) => {
         <Feather name="home" size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => handlePress('history')}>
-        <Feather name="history" size={24} color="black" />
+        <Feather name="shopping-bag" size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => handlePress('cart')}>
         <Feather name="shopping-cart" size={24} color="black" />
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,
+    padding: 20,
     backgroundColor: '#fff',
   },
 });

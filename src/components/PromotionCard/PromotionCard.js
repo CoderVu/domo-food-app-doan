@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   contactContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 5,
+    marginBottom: 5,
   },
   textWhite: {
     color: colors.white,
@@ -97,7 +97,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 5,
+
   },
   dot: {
     width: 8,
@@ -105,10 +106,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.medium,
     marginHorizontal: 4,
+
+    
   },
   activeDot: {
     backgroundColor: colors.primary,
     width: 10,
     height: 10,
+    borderRadius: 5,
+
   },
 });
