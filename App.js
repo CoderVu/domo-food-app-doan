@@ -5,8 +5,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddPayment from "./src/screens/AddPayment";
 import Home from "./src/screens/Home";
 import LoginScreen from "./src/screens/login";
-import Details from "./src/screens/Details";
+import ProductDetails from "./src/screens/ProductDetails";
+import ComboDetails from "./src/screens/ComboDetails";
 import MyCart from "./src/screens/MyCart";
+import ComboProducts from "./src/screens/ComboProducts";
 import MyOrder from "./src/screens/MyOrder";
 import AppFooter from "./src/components/common/AppFooter";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -29,7 +31,9 @@ const App = () => {
             >
               <Stack.Screen name="login" component={LoginScreen} />
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Details" component={Details} />
+              <Stack.Screen name ="ComboProducts" component={ComboProducts} />
+              <Stack.Screen name="ProductDetails" component={ProductDetails} />
+              <Stack.Screen name ="ComboDetails" component={ComboDetails} />
               <Stack.Screen name="AddPayment" component={AddPayment} />
               <Stack.Screen name="MyCart" component={MyCart} />
               <Stack.Screen name="MyOrder" component={MyOrder} />

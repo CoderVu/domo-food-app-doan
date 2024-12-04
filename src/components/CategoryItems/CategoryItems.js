@@ -4,7 +4,7 @@ import { fetchProductsByIdCategory } from '../../components/Redux/Action/product
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import Card from "../Card/Card"; // Make sure you have the Card component
 
-const CategoryItems = ({ categoryId }) => {
+const CategoryItems = ({ categoryId, onScroll }) => {
     const dispatch = useDispatch();
     const productsByCategory = useSelector((state) => state.product.productsByCategory);
     const loading = useSelector((state) => state.product.loading);
@@ -34,6 +34,8 @@ const CategoryItems = ({ categoryId }) => {
             )}
             keyExtractor={(item) => item.productId.toString()} // Unique key
             numColumns={2} // Display 2 columns
+            onScroll={onScroll} // Pass onScroll event
+            scrollEventThrottle={16} // để scroll mượt hơn
             columnWrapperStyle={styles.row} // Style rows
             contentContainerStyle={styles.container} // Style content
             showsVerticalScrollIndicator={false} // Hide vertical scrollbar

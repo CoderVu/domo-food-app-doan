@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Animated, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Animated, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { Ionicons } from "@expo/vector-icons"; // Importing Ionicons for icons
 import Screen from "../components/Screen/Screen";
 import PromotionCard from "../components/PromotionCard/PromotionCard";
 import TabViewComponent from "../components/TabView/TabView";
@@ -8,7 +10,7 @@ import SearchHeader from "../components/SearchHeader/SearchHeader";
 import { fetchProductBySearch } from "../components/Redux/Action/productActions";
 import CardSearch from "../components/Card/CardSearch";
 import AppFooter from "../components/common/AppFooter";
-import Icon from "react-native-vector-icons/MaterialIcons"; 
+import ComboProducts from "./ComboProducts";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -18,9 +20,15 @@ const Home = ({ navigation }) => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [index, setIndex] = useState(0); // State for TabView index
+  const [routes] = useState([
+    { key: "category", title: "Danh mục sản phẩm" },
+    { key: "combo", title: "Combo sản phẩm" },
+  ]);
   const cardSearchRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerVisibility = useRef(new Animated.Value(1)).current;
+  const layout = useWindowDimensions();
 
   const slides = [
     {
@@ -75,13 +83,41 @@ const Home = ({ navigation }) => {
     outputRange: [0, 1], 
   });
 
-  const toggleHeaderVisibility = () => {
-    Animated.timing(headerVisibility, {
-      toValue: headerVisibility.__getValue() === 1 ? 0 : 1, 
-      duration: 300,
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    {
       useNativeDriver: false,
-    }).start();
-  };
+      listener: (event) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        if (offsetY > 0) {
+          Animated.timing(headerVisibility, {
+            toValue: 0,
+            duration: 0, 
+            useNativeDriver: false,
+          }).start();
+        } else {
+          Animated.timing(headerVisibility, {
+            toValue: 1,
+            duration: 0, 
+            useNativeDriver: false,
+          }).start();
+        }
+      },
+    }
+  );
+
+  const CategoryRoute = () => (
+    <TabViewComponent onScroll={handleScroll} />
+  );
+
+  const ComboRoute = () => (
+    <ComboProducts onScroll={handleScroll} />
+  );
+
+  const renderScene = SceneMap({
+    category: CategoryRoute,
+    combo: ComboRoute,
+  });
 
   return (
     <Screen>
@@ -91,21 +127,23 @@ const Home = ({ navigation }) => {
           <PromotionCard slides={slides} />
         </Animated.View>
 
-        {/* Arrow button to toggle visibility of PromotionCard */}
-        <TouchableOpacity style={styles.toggleButton} onPress={toggleHeaderVisibility}>
-          <Icon
-            name={headerVisibility.__getValue() === 1 ? "keyboard-arrow-up" : "keyboard-arrow-down"}
-            size={30}
-            color="white" // White for visibility on purple background
-          />
-        </TouchableOpacity>
-
         {!isSearching && (
-          <View style={styles.categories}>
-            <TabViewComponent />
-          </View>
+          <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={{ width: layout.width }}
+            renderTabBar={(props) => (
+              <TabBar
+                {...props}
+                style={styles.tabBar}
+                indicatorStyle={styles.tabIndicator}
+                labelStyle={styles.tabLabel}
+              />
+            )}
+          />
         )}
-        
+
         {isSearching && (
           <View style={styles.searchResults}>
             <CardSearch
@@ -127,26 +165,27 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa", // Light gray for subtle contrast
   },
   header: {
-    overflow: 'hidden',
-  },
-  toggleButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 2,  // Ensure the button is on top
-    backgroundColor: "#7b61ff", // Purple background
-    padding: 10,
-    borderRadius: 30,  // Circular button
-  },
-  categories: {
-    paddingHorizontal: 10,
-    flex: 1,
+    overflow: "hidden",
   },
   searchResults: {
     padding: 10,
     flex: 1,
+  },
+  tabBar: {
+    backgroundColor: "#7b61ff",
+    elevation: 5, // Adds a shadow for better separation
+  },
+  tabIndicator: {
+    backgroundColor: "#fff",
+    height: 4,
+    borderRadius: 2,
+  },
+  tabLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
 

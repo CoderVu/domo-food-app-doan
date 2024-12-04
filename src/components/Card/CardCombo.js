@@ -5,17 +5,14 @@ import { useNavigation } from '@react-navigation/native';
 import AppText from "../common/AppText";
 import { colors } from "../../theme/colors";
 
-// Initialize the Geocoder with your API key
-const API_KEY = '5b3ce3597851110001cf624888c86f18453143d7892cff533a74a371';
-
-const Card = ({ item }) => {
+const CardCombo = ({ item }) => {
   const navigation = useNavigation();
   const [location, setLocation] = useState("Loading...");
-  const [storeIndex, setStoreIndex] = useState(0); // Track the current store index
+  const [storeIndex, setStoreIndex] = useState(0); 
   const [storeLocations, setStoreLocations] = useState([]);
-  const scale = useState(new Animated.Value(1))[0]; // Animation state for scaling the card
+  const scale = useState(new Animated.Value(1))[0]; 
 
-  // Giới hạn độ dài của mô tả (10 ký tự) và địa chỉ (5 ký tự)
+  // Giới hạn độ dài của mô tả (30 ký tự) và địa chỉ (5 ký tự)
   const descriptionText = item.description.length > 30 ? item.description.slice(0, 30) + '...' : item.description;
   const locationText = location.length > 5 ? location.slice(0, 5) + '...' : location;
 
@@ -39,15 +36,15 @@ const Card = ({ item }) => {
       }
     };
 
-    // Fetch location for all stores
-    const fetchAllLocations = async () => {
-      if (item?.stores && item.stores.length > 0) {
-        const storeAddresses = await Promise.all(item.stores.map(store => fetchLocation(store)));
-        setStoreLocations(storeAddresses);
-      }
-    };
-
-    fetchAllLocations();
+    // Fetch location for all stores in the combo
+    if (item?.stores && item.stores.length > 0) {
+      const storeAddresses = [];
+      item.stores.forEach((store) => {
+        const address = fetchLocation(store);
+        storeAddresses.push(address);
+      });
+      setStoreLocations(storeAddresses);
+    }
   }, [item]);
 
   // Change store every 10 seconds
@@ -56,7 +53,7 @@ const Card = ({ item }) => {
       setStoreIndex((prevIndex) => (prevIndex + 1) % item.stores.length);
     }, 10000); // Change every 10 seconds
 
-    return () => clearInterval(interval); // Clean up interval on unmount
+    return () => clearInterval(interval); 
   }, [item.stores.length]);
 
   // Update location text based on the current store
@@ -82,20 +79,22 @@ const Card = ({ item }) => {
     }).start();
   };
 
-  const handlePress = (productId) => {
-    console.log('Product ID:', productId);
-    navigation.navigate("ProductDetails", { productId });
+  const handlePress = (comboId) => {
+    console.log('Combo ID:', comboId),
+    navigation.navigate("ComboDetails", { 
+      comboId,
+    });
   };
 
   return (
     <TouchableOpacity
       style={[styles.container, { alignSelf: 'flex-start' }]}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={() => handlePress(item.productId)}
+      onPressIn={handlePressIn}  // Trigger animation when pressed
+      onPressOut={handlePressOut} // Reset animation when released
+      onPress={() => handlePress(item.comboId)} // Navigate to ComboDetails
     >
       <Animated.View
-        style={[styles.cardImageContainer, { transform: [{ scale }] }]}
+        style={[styles.cardImageContainer, { transform: [{ scale }] }]} // Apply scale animation
       >
         <Image
           source={{ uri: `data:image/png;base64,${item.image}` }}
@@ -103,9 +102,9 @@ const Card = ({ item }) => {
         />
       </Animated.View>
       <View style={styles.cardBody}>
-        {/* Product Name and Rating in Row */}
+        {/* Combo Name and Rating in Row */}
         <View style={styles.nameRatingContainer}>
-          <AppText text={item.productName} customStyles={styles.textBold} />
+          <AppText text={item.comboName} customStyles={styles.textBold} />
           <View style={styles.iconTextContainer}>
             <Ionicons name="star" size={13} color={colors.yellow} />
             <AppText text={`(${item.averageRate}.0)`} customStyles={styles.textMedium} />
@@ -115,9 +114,10 @@ const Card = ({ item }) => {
         <View style={[styles.directionRow, styles.cardFooter]}>
           {/* Price */}
           <AppText
-            text={new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
-            customStyles={[styles.priceText, { marginRight: 10 }]}
+            text={`đ${item.price}`}
+            customStyles={[styles.priceText, { marginRight: 10 }]} 
           />
+          
           {/* Address */}
           <View style={styles.iconTextContainer}>
             <Ionicons name="location" size={13} color={colors.primary} />
@@ -128,8 +128,6 @@ const Card = ({ item }) => {
     </TouchableOpacity>
   );
 };
-
-export default Card;
 
 const styles = StyleSheet.create({
   container: {
@@ -206,3 +204,5 @@ const styles = StyleSheet.create({
     fontSize: 16, // Larger font for emphasis
   },
 });
+
+export default CardCombo;

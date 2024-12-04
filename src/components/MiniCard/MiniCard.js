@@ -1,36 +1,54 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "../../theme/colors";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../../theme/colors';
 
 const MiniCard = ({ icon, title, subtitle }) => {
   return (
     <View style={styles.container}>
-      <Feather name={icon} style={styles.icon} color={colors.primary} />
-      <View style={styles.information}>
-        <Text style={styles.textMedium}>{title}</Text>
-        <Text style={styles.textMedium}>{subtitle}</Text>
+      <Ionicons name={icon} size={22} color={colors.primary} style={styles.icon} />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
     </View>
   );
 };
 
-export default MiniCard;
-
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "23%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,  // Clean white background for modern look
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 12,  // Slightly more rounded corners
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,  // Enhanced shadow effect for depth
+    marginVertical: 8,  // Some spacing between cards
   },
   icon: {
-    padding: 10,
-    backgroundColor: colors.light,
-    borderRadius: 5,
+    marginRight: 16,  // Increased space between icon and text for modern layout
   },
-  textMedium: {
-    fontFamily: "Lato-Bold",
-    color: colors.gray,
+  textContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  title: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 18,  // Slightly larger title for better readability
+    color: colors.dark,
+    fontWeight: '600',  // Modern weight
+  },
+  subtitle: {
+    fontFamily: 'Lato-Regular',
+    fontSize: 14,
+    color: colors.medium,
+    marginTop: 2,  // Small margin between title and subtitle
   },
 });
+
+export default MiniCard;

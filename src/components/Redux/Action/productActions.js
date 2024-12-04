@@ -1,6 +1,5 @@
 import types from "../types";
 import {
-    fetchProductsBestSaleService,
     fetchProductsByIdCategoryService,
     fetchAllCombosService,
     fetchProductByIdService,
@@ -22,18 +21,7 @@ const fetchProductsBestSaleSuccess = (data) => {
         dataProducts: data
     };
 };
-const fetchProductsBestSale = () => {
-    return async (dispatch, getState) => {
-        try {
-            const res = await fetchProductsBestSaleService();
-            const data = res && res.data ? res.data.data : [];
-            dispatch(fetchProductsBestSaleSuccess(data)); // // Chạy ở đây (2)
-           // console.log(data);
-        } catch (error) {
-            //console.log(error);
-        }
-    }
-};
+
 // by idCategory
 const fetchProductsByIdCategorySuccess = ({ data, categoryId }) => {
     return {
@@ -59,20 +47,28 @@ const fetchProductsByIdCategory = (id) => {
 const fetchAllCombosSuccess = (data) => {
     return {
         type: types.FETCH_ALL_COMBO_SUCCESS,
-        dataCombos: data
+        dataCombos: data,
     };
 };
+
+const fetchAllCombosFailure = (error) => {
+    return {
+        type: types.FETCH_ALL_COMBO_FAILURE,
+        error,
+    };
+};
+
 const fetchAllCombos = (id) => {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         try {
             const res = await fetchAllCombosService();
             const data = res && res.data ? res.data.data : [];
-            dispatch(fetchAllCombosSuccess(data)); // // Chạy ở đây (2)
-            // console.log(data);
+            dispatch(fetchAllCombosSuccess(data));
         } catch (error) {
             console.log(error);
+            dispatch(fetchAllCombosFailure(error.message));
         }
-    }
+    };
 };
 // fetch all prodcuc
 const fetchAllProductsSuccess = (data) => {
@@ -118,7 +114,7 @@ const fetchAllDrinks = (id) => {
 const fetchProductByIdSuccess = (data) => {
     return {
         type: types.FETCH_PRODUCT_BY_ID_SUCCESS,
-        productDetail: data
+        productDetail: data,
     };
 };
 const fetchProductById = (id) => {
@@ -126,8 +122,8 @@ const fetchProductById = (id) => {
         try {
             const res = await fetchProductByIdService(id);
             const data = res && res.data ? res.data.data[0] : {};
-            dispatch(fetchProductByIdSuccess(data)); // // Chạy ở đây (2)
-            // console.log(data);
+            dispatch(fetchProductByIdSuccess(data)); 
+    
         } catch (error) {
             console.log(error);
         }
@@ -145,8 +141,8 @@ const fetchComboById = (id) => {
         try {
             const res = await fetchComboByIdService(id);
             const data = res && res.data ? res.data.data[0] : {};
-            dispatch(fetchComboByIdSuccess(data)); // // Chạy ở đây (2)
-           // console.log(data);
+            dispatch(fetchComboByIdSuccess(data)); 
+    
         } catch (error) {
             console.log(error);
         }
@@ -169,7 +165,7 @@ const fetchProductsByIdStore = (id) => {
             const data = res && res.data ? res.data.data : [];
             // Gửi action fetchProductsByIdStoreSuccess với dữ liệu sản phẩm
             dispatch(fetchProductsByIdStoreSuccess(data)); // Chạy ở đây (2)
-           // console.log(data);
+            // console.log(data);
         } catch (error) {
             // In ra lỗi nếu có
             console.log(error);
@@ -200,7 +196,7 @@ const fetchRatingProductById = (id) => {
                 })
             );
             dispatch(fetchRatingProductByIdSuccess(dataRating));
-          //  console.log('dataRating: ', dataRating);
+            //  console.log('dataRating: ', dataRating);
         } catch (error) {
             console.log(error);
             toast.error('Không lấy được đánh giá sản phẩm!')
@@ -213,13 +209,13 @@ const fetchProductsBySearchQuerySuccess = (data) => {
         dataProducts: data
     };
 };
-const fetchProductBySearch= (query) => {
+const fetchProductBySearch = (query) => {
     return async (dispatch, getState) => {
         try {
             const res = await fetchProductsBySearchQueryService(query);
             const data = res && res.data ? res.data.data : [];
             dispatch(fetchProductsBySearchQuerySuccess(data)); // // Chạy ở đây (2)
-    
+
         } catch (error) {
             console.log(error);
         }
@@ -227,7 +223,6 @@ const fetchProductBySearch= (query) => {
 }
 
 export {
-    fetchProductsBestSale,
     fetchProductsByIdCategory,
     fetchAllCombos,
     fetchAllDrinks,

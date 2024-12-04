@@ -6,7 +6,7 @@ import { fetchAllCategories } from '../Redux/Action/categoryActions';
 import CategoryItems from "../CategoryItems/CategoryItems";
 import TabBar from "./TabBar";
 
-const TabViewComponent = () => {
+const TabViewComponent = ({ onScroll }) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const dispatch = useDispatch();
@@ -31,8 +31,6 @@ const TabViewComponent = () => {
 
   const handleIndexChange = (index) => {
     setIndex(index);
-    const selectedRoute = routes[index];
- 
   };
 
   if (loading) {
@@ -49,7 +47,7 @@ const TabViewComponent = () => {
         renderTabBar={(props) => <TabBar {...props} />}
         navigationState={{ index, routes }}
         renderScene={({ route }) => {
-          return <CategoryItems categoryId={route.key} />;
+          return <CategoryItems categoryId={route.key} onScroll={onScroll} />;
         }}
         onIndexChange={handleIndexChange}
         initialLayout={{ width: layout.width }}
