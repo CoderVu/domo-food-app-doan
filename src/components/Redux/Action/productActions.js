@@ -5,7 +5,6 @@ import {
     fetchProductByIdService,
     fetchComboByIdService,
     fetchProductsByIdStoreService,
-    fetchRatingProductByIdService,
     fetchAllDrinksService,
     fetchAllProductsService,
     fetchProductsBySearchQueryService
@@ -14,13 +13,6 @@ import {
 import { fetchUserDetailByIdService } from "../../Redux/Services/UserService";
 import { toast } from "react-toastify";
 
-// Best sale
-const fetchProductsBestSaleSuccess = (data) => {
-    return {
-        type: types.FETCH_PRODUCT_BEST_SALE_SUCCESS,
-        dataProducts: data
-    };
-};
 
 // by idCategory
 const fetchProductsByIdCategorySuccess = ({ data, categoryId }) => {
@@ -103,7 +95,6 @@ const fetchAllDrinks = (id) => {
             const res = await fetchAllDrinksService();
             const data = res && res.data ? res.data.data : [];
             dispatch(fetchAllDrinksSuccess(data)); // // Chạy ở đây (2)
-            // console.log(data);
         } catch (error) {
             console.log(error);
         }
@@ -179,30 +170,6 @@ const fetchRatingProductByIdSuccess = (data) => {
         dataRatingProduct: data
     };
 };
-const fetchRatingProductById = (id) => {
-    return async (dispatch, getState) => {
-        try {
-            const resRating = await fetchRatingProductByIdService(id);
-            let dataRating = resRating && resRating.data ? resRating.data.data : [];
-            // Lấy thêm avatar + fullname User cho từng phần tử trong dataRating
-            dataRating = await Promise.all(
-                dataRating.map(async (rating) => {
-                    const resUser = await fetchUserDetailByIdService(rating.userId);
-                    const dataUser = resUser && resUser.data ? resUser.data.data : {};
-                    return {
-                        ...rating,
-                        dataUser: dataUser,
-                    };
-                })
-            );
-            dispatch(fetchRatingProductByIdSuccess(dataRating));
-            //  console.log('dataRating: ', dataRating);
-        } catch (error) {
-            console.log(error);
-            toast.error('Không lấy được đánh giá sản phẩm!')
-        }
-    }
-};
 const fetchProductsBySearchQuerySuccess = (data) => {
     return {
         type: types.FETCH_PRODUCT_BY_SEARCH_QUERY_SUCCESS,
@@ -221,6 +188,11 @@ const fetchProductBySearch = (query) => {
         }
     }
 }
+const resetComboDetail = () => {
+    return {
+        type: types.RESET_COMBO_DETAIL
+    };
+}
 
 export {
     fetchProductsByIdCategory,
@@ -228,9 +200,10 @@ export {
     fetchAllDrinks,
     fetchProductById,
     fetchProductsByIdStore,
-    fetchRatingProductById,
     fetchComboById,
     fetchAllProducts,
-    fetchProductBySearch
+    fetchProductBySearch,
+    // resetComboDetail
+    resetComboDetail
 
 }

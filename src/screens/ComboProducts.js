@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllCombos } from '../components/Redux/Action/productActions';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AppText from '../components/common/AppText';
 import { colors } from '../theme/colors';
-
+import Screen from "../components/Screen/Screen";
 const ComboProducts = ({ onScroll }) => {
   const dispatch = useDispatch();
-  const { allCombos = [], loading, error } = useSelector((state) => state.product);
+  const loading = useSelector((state) => state.product.loading);
+  const error = useSelector((state) => state.product.error);
+  const { allCombos = [] } = useSelector((state) => state.product);
   const navigation = useNavigation();
 
   const [scale] = useState(new Animated.Value(1));
@@ -17,6 +19,16 @@ const ComboProducts = ({ onScroll }) => {
   useEffect(() => {
     dispatch(fetchAllCombos());
   }, [dispatch]);
+
+  if (loading || allCombos.length === 0) {
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
 
   const handlePressIn = () => {
     Animated.spring(scale, {

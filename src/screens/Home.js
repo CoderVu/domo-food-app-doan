@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Animated, TouchableOpacity, useWindowDimensions } from "react-native";
+import { StyleSheet, View, Text, Animated, TouchableOpacity, useWindowDimensions, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Ionicons } from "@expo/vector-icons"; // Importing Ionicons for icons
@@ -11,6 +11,7 @@ import { fetchProductBySearch } from "../components/Redux/Action/productActions"
 import CardSearch from "../components/Card/CardSearch";
 import AppFooter from "../components/common/AppFooter";
 import ComboProducts from "./ComboProducts";
+import { colors } from "../theme/colors";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -146,16 +147,21 @@ const Home = ({ navigation }) => {
 
         {isSearching && (
           <View style={styles.searchResults}>
-            <CardSearch
-              ref={cardSearchRef}
-              items={results}
-              nestedScrollEnabled={true}
-            />
+            {loading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={colors.primary} />
+              </View>
+            ) : (
+              <CardSearch
+                ref={cardSearchRef}
+                items={results}
+                nestedScrollEnabled={true}
+              />
+            )}
           </View>
         )}
 
-        {loading && <Text>Loading...</Text>}
-        {error && <Text>Error: {error}</Text>}
+        {error && <Text style={styles.errorText}>Error: {error}</Text>}
       </View>
       <AppFooter navigation={navigation} />
     </Screen>
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabBar: {
-    backgroundColor: "#7b61ff",
+    backgroundColor: colors.primary,
     elevation: 5, // Adds a shadow for better separation
   },
   tabIndicator: {
@@ -186,6 +192,17 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 14,
     fontWeight: "bold",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: colors.red,
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

@@ -19,7 +19,7 @@ const CategoryItems = ({ categoryId, onScroll }) => {
     const categoryItems = productsByCategory[categoryId] || []; // Default to empty array
 
     if (loading) {
-        return <Text>Loading...</Text>;
+        return <Text>Loading...false</Text>;
     }
 
     if (error) {
@@ -49,6 +49,7 @@ export default CategoryItems;
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 10, // Add padding for all items
+        backgroundColor: '#f0f0f0', // Light gray background
     },
     row: {
         justifyContent: 'space-between', // Distribute items evenly

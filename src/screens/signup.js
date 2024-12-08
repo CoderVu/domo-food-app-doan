@@ -48,9 +48,6 @@ const SignupScreen = () => {
                     style={styles.logo}
                 />
             </View>
-            <View style={styles.welcomeTextContainer}>
-                <Text style={styles.welcomeText}></Text>
-            </View>
             <AppTextField
                 hintText="Name"
                 value={fullName}
@@ -85,7 +82,7 @@ const SignupScreen = () => {
 
             <View style={styles.signInContainer}>
                 <Text style={styles.signInText}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <TouchableOpacity onPress={() => navigation.navigate('login')}>
                     <Text style={styles.signInLink}>Sign In</Text>
                 </TouchableOpacity>
             </View>
@@ -100,44 +97,38 @@ const SignupScreen = () => {
     );
 };
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.secondary,
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     logoContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 30,
     },
     logo: {
-        width: 160,
-        height: 160,
+        width: 180,
+        height: 180,
         resizeMode: 'contain',
     },
-    welcomeTextContainer: {
-        marginLeft: 16,
-        marginBottom: 16,
-    },
-    welcomeText: {
-        fontSize: 34,
-        fontWeight: 'bold',
-    },
     signupButton: {
-        width: '50%',
+        width: '70%',
         height: 50,
         backgroundColor: Colors.mainColor,
-        borderRadius: 25,
+        borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
-        marginTop: 16,
+        marginTop: 24,
     },
     signInContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 16,
+        marginTop: 18,
     },
     signInText: {
         fontSize: 16,
@@ -152,17 +143,18 @@ const styles = StyleSheet.create({
         marginTop: 20,
         textAlign: 'center',
         fontSize: 16,
+        color: Colors.black,
     },
     socialIcons: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 10,
+        marginTop: 15,
     },
     iconImage: {
-        width: 40,
-        height: 40,
-        marginHorizontal: 10,
-        borderRadius: 20,
+        width: 50,
+        height: 50,
+        marginHorizontal: 12,
+        borderRadius: 25,
     },
 });
 

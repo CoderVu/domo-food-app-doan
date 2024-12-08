@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
 import AppHeader from "../components/common/AppHeader";
 import Screen from "../components/Screen/Screen";
@@ -6,7 +6,7 @@ import AppText from "../components/common/AppText";
 import Button from "../components/common/Button";
 import { colors } from "../theme/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchComboById } from "../components/Redux/Action/productActions";
+import { fetchComboById ,resetComboDetail} from "../components/Redux/Action/productActions";
 import Quantity from "../components/Quantity/Quantity";
 import MiniCard from "../components/MiniCard/MiniCard";
 
@@ -24,23 +24,42 @@ const ComboDetails = ({ route }) => {
   };
 
   useEffect(() => {
+    dispatch(resetComboDetail());
     dispatch(fetchComboById(comboId));
   }, [dispatch, comboId]);
 
+
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </Screen>
+    );
   }
 
   if (error) {
     return <Text>Error: {error}</Text>;
   }
 
+  // Check if combo data exists
+  if (!combo || !combo.price) {
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
+
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN').format(price); // 'vi-VN' là định dạng cho Việt Nam
+    return new Intl.NumberFormat('vi-VN').format(price);
   };
 
   // Calculate the total price based on quantity and combo price
-  const totalPrice = combo?.price * quantity;
+  const totalPrice = combo.price * quantity;
 
   return (
     <Screen>
@@ -48,16 +67,16 @@ const ComboDetails = ({ route }) => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerImageContainer}>
           <Image
-            source={{ uri: `data:image/png;base64,${combo?.image}` }}
+            source={{ uri: `data:image/png;base64,${combo.image}` }}
             style={styles.image}
-            resizeMode="contain" // Maintain aspect ratio
+            resizeMode="contain"
           />
         </View>
         <View style={styles.body}>
           <View style={styles.comboTitleContainer}>
-            <AppText text={combo?.comboName || 'Combo Name'} customStyles={styles.comboTitle} />
+            <AppText text={combo.comboName} customStyles={styles.comboTitle} />
             <AppText
-              text={`(${combo?.averageRate || 0} Reviews)`}
+              text={`(${combo.averageRate || 0} Reviews)`}
               customStyles={styles.reviewsText}
             />
           </View>
@@ -68,38 +87,41 @@ const ComboDetails = ({ route }) => {
               increaseQuantity={increaseQuantity}
               decreaseQuantity={decreaseQuantity}
             />
-            <AppText text={`${formatPrice(combo?.price || 0)} đ`} customStyles={styles.comboPrice} />
+            <AppText text={`${formatPrice(combo.price)} đ`} customStyles={styles.comboPrice} />
           </View>
 
           <View style={styles.directionRowSpaceBetween}>
-            <MiniCard icon={"star"} title={(combo?.averageRate || 0).toString()} subtitle={"Rating"} />
-            <MiniCard icon={"camera"} title={(combo?.photos || 0).toString()} subtitle={"Photos"} />
+            <MiniCard icon={"star"} title={(combo.averageRate || 0).toString()} subtitle={"Rating"} />
+            <MiniCard icon={"camera"} title={(combo.photos || 0).toString()} subtitle={"Photos"} />
           </View>
 
           <View style={styles.detailsContainer}>
             <AppText text="Mô tả" customStyles={styles.sectionTitle} />
-            <AppText text={combo?.description || 'No description available'} customStyles={styles.comboDescription} />
+            <AppText text={combo.description || 'No description available'} customStyles={styles.comboDescription} />
           </View>
 
           <View style={styles.productsContainer}>
             <AppText text="Sản phẩm" customStyles={styles.sectionTitle} />
             <ScrollView horizontal={true} style={styles.productList}>
-              {combo?.products?.map((product, index) => (
-                <TouchableOpacity key={index} style={styles.productCard}>
-                  <Image
-                    source={{ uri: `data:image/png;base64,${product.image}` }}
-                    style={styles.productImage}
-                    resizeMode="contain" // Maintain aspect ratio
-                  />
-                  <AppText text={product.productName} customStyles={styles.productName} />
-                </TouchableOpacity>
-              )) || <AppText text="No products available" customStyles={styles.textMedium} />}
+              {combo.products.length > 0 ? (
+                combo.products.map((product, index) => (
+                  <TouchableOpacity key={index} style={styles.productCard}>
+                    <Image
+                      source={{ uri: `data:image/png;base64,${product.image}` }}
+                      style={styles.productImage}
+                      resizeMode="contain"
+                    />
+                    <AppText text={product.productName} customStyles={styles.productName} />
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <AppText text="No products available" customStyles={styles.textMedium} />
+              )}
             </ScrollView>
           </View>
 
-          {/* Display total price separately */}
           <View style={styles.totalPriceContainer}>
-            <AppText text={`Tổng cộng: ${formatPrice(totalPrice || 0)} đ`} customStyles={styles.totalPriceText} />
+            <AppText text={`Tổng cộng: ${formatPrice(totalPrice)} đ`} customStyles={styles.totalPriceText} />
           </View>
 
           <View style={styles.buttonContainer}>
@@ -120,9 +142,24 @@ const ComboDetails = ({ route }) => {
   );
 };
 
-export default ComboDetails;
-
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.lightGray,
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.lightGray,
+  },
+  noDataText: {
+    fontFamily: "Lato-Regular",
+    fontSize: 18,
+    color: colors.gray,
+  },
   scrollView: {
     flex: 1,
     backgroundColor: colors.lightGray,
@@ -235,36 +272,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
-    paddingHorizontal: 10, // Add some padding to make it more compact
-   
-    
-   
+    paddingHorizontal: 10,
   },
   addToCartButton: {
     backgroundColor: colors.primary,
     alignSelf: "center",
-    width: "40%",  // Adjust width to make the button smaller
-    paddingVertical: 12,  // Decrease padding to make the button smaller
-    borderRadius: 8, // Optionally, reduce the border radius for a sharper look
+    width: "40%",
+    paddingVertical: 12,
+    borderRadius: 8,
   },
   buyNowButton: {
     backgroundColor: colors.primary,
     alignSelf: "center",
-    width: "40%",  // Adjust width to make the button smaller
-    paddingVertical: 12,  // Decrease padding to make the button smaller
-    borderRadius: 8,  // Optionally, reduce the border radius for a sharper look
+    width: "40%",
+    paddingVertical: 12,
+    borderRadius: 8,
   },
   addToCartButtonLabel: {
     textAlign: "center",
-    fontSize: 16,  // Adjust font size for the smaller button
+    fontSize: 16,
     color: colors.white,
   },
   buyNowButtonLabel: {
     textAlign: "center",
-    fontSize: 16,  // Adjust font size for the smaller button
+    fontSize: 16,
     color: colors.white,
   },
   headerTitle: {
     marginLeft: "30%",
   },
 });
+
+export default ComboDetails;

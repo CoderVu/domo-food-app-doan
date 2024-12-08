@@ -3,7 +3,7 @@ import types from "../types";
 const INITIAL_STATE = {
   listProductsBestSale: [],
   listProductsByIdCategory: [],
-  allCombos: [], // Ensure initial state is an empty array
+  allCombos: [],
   allProducts: [],
   allProductsBySearchQuery: [],
   productDetail: {},
@@ -23,12 +23,6 @@ const productReducer = (state = INITIAL_STATE, action) => {
         ...state,
         listProductsBestSale: action.dataProducts,
       };
-    case types.FETCH_PRODUCT_BY_ID_CATEGORY_REQUEST:
-      return {
-        ...state,
-        loading: true,
-        error: null,
-      };
     case types.FETCH_PRODUCT_BY_ID_CATEGORY_SUCCESS:
       return {
         ...state,
@@ -37,12 +31,6 @@ const productReducer = (state = INITIAL_STATE, action) => {
           [action.categoryId]: action.dataProducts,
         },
         loading: false,
-      };
-    case types.FETCH_PRODUCT_BY_ID_CATEGORY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        error: action.error,
       };
     case types.FETCH_ALL_COMBO_SUCCESS:
       return {
@@ -84,6 +72,13 @@ const productReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         comboDetail: action.comboDetail,
+      };
+    case types.RESET_COMBO_DETAIL:
+      return {
+        ...state,
+        comboDetail: {},
+        loading: true,
+        error: null,
       };
     case types.FETCH_PRODUCT_BY_ID_STORE_SUCCESS:
       return {

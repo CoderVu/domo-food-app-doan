@@ -29,12 +29,11 @@ const LoginScreen = () => {
             const response = await Login(loginData);
     
             if (response && response.data && response.data.token) {
-
                 await AsyncStorage.setItem('user', JSON.stringify(response.data)); 
                 await AsyncStorage.setItem('token', response.data.token); 
                 console.log(response.data);
                 
-                Alert.alert('Success', 'Login successful');
+                Alert.alert('Chúc mừng', 'Đăng nhập thành công');
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'Home' }],
@@ -50,7 +49,7 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{ height: height * 0.05 }} />
+            <View style={{ height: height * 0.1 }} />
             <View style={styles.logoContainer}>
                 <Image
                     source={require('../../assets/images/logo part 1.png')} 
@@ -58,7 +57,7 @@ const LoginScreen = () => {
                 />
             </View>
             <View style={styles.welcomeTextContainer}>
-                <Text style={styles.welcomeText}>Welcome back!</Text>
+                <Text style={styles.welcomeText}>Sign In</Text>
             </View>
             <AppTextField
                 hintText="Phone"
@@ -74,11 +73,11 @@ const LoginScreen = () => {
                 icon="lock"
             />
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <BigText text="Sign In" size={20} color="#fff" />
+                <BigText text="SIGN IN" size={20} color="#fff" />
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
                 <Text style={styles.signUpText}>Don't have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                <TouchableOpacity onPress={() => navigation.navigate('signup')}>
                     <Text style={styles.signUpLink}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
@@ -91,6 +90,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.secondary,
         paddingHorizontal: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     logoContainer: {
         justifyContent: 'center',
@@ -103,21 +104,20 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     welcomeTextContainer: {
-        marginLeft: 16,
-        marginBottom: 16,
+        marginBottom: 24,
     },
     welcomeText: {
         fontSize: 34,
         fontWeight: 'bold',
+        color: Colors.primaryText,
     },
     loginButton: {
-        width: '50%',
+        width: '80%',
         height: 50,
         backgroundColor: Colors.mainColor,
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
         marginTop: 16,
     },
     signUpContainer: {

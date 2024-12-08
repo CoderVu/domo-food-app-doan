@@ -1,16 +1,20 @@
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View , ActivityIndicator} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { TabView } from "react-native-tab-view";
 import { fetchAllCategories } from '../Redux/Action/categoryActions';
 import CategoryItems from "../CategoryItems/CategoryItems";
 import TabBar from "./TabBar";
-
+import Screen from "../../components/Screen/Screen";
+import { colors } from "../../theme/colors";
 const TabViewComponent = ({ onScroll }) => {
+  const loading = useSelector((state) => state.category.loading);
+  const error = useSelector((state) => state.category.error);
+
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const dispatch = useDispatch();
-  const { dataCategories, loading, error } = useSelector((state) => state.category);
+  const { dataCategories } = useSelector((state) => state.category);
 
   useEffect(() => {
     dispatch(fetchAllCategories());
@@ -33,10 +37,15 @@ const TabViewComponent = ({ onScroll }) => {
     setIndex(index);
   };
 
-  if (loading) {
-    return <Text>Loading...</Text>;
+  if (loading || dataCategories.length === 0) {
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </Screen>
+    );
   }
-
   if (error) {
     return <Text>{error}</Text>;
   }
