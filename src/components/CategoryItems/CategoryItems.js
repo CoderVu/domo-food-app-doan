@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsByIdCategory } from '../../components/Redux/Action/productActions';
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View , ActivityIndicator} from "react-native";
 import Card from "../Card/Card"; // Make sure you have the Card component
+import { colors } from "../../theme/colors";
+import Screen from "../Screen/Screen";
+
 
 const CategoryItems = ({ categoryId, onScroll }) => {
     const dispatch = useDispatch();
@@ -19,9 +22,14 @@ const CategoryItems = ({ categoryId, onScroll }) => {
     const categoryItems = productsByCategory[categoryId] || []; // Default to empty array
 
     if (loading) {
-        return <Text>Loading...false</Text>;
-    }
-
+        return (
+          <Screen>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          </Screen>
+        );
+      }
     if (error) {
         return <Text>{error}</Text>;
     }

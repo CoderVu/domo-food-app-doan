@@ -59,37 +59,31 @@ const MyCart = () => {
 
   const handleIncreaseQuantity = (cartId, currentQuantity) => {
     const newQuantity = currentQuantity + 1;
-
-    // Cập nhật Redux store và backend
-    dispatch(increaseOneQuantity(cartId, newQuantity));
-    dispatch(fetchProductsInCart());  // Re-fetch giỏ hàng để đảm bảo dữ liệu đồng bộ
+    dispatch(increaseOneQuantity(cartId, newQuantity)); // Chỉ cập nhật store
   };
-
+  
   const handleDecreaseQuantity = (cartId, currentQuantity) => {
     if (currentQuantity > 1) {
       const newQuantity = currentQuantity - 1;
-
-      // Cập nhật Redux store và backend
-      dispatch(decreaseOneQuantity(cartId, newQuantity));
-      dispatch(fetchProductsInCart());  // Re-fetch giỏ hàng để đảm bảo dữ liệu đồng bộ
+      dispatch(decreaseOneQuantity(cartId, newQuantity)); // Chỉ cập nhật store
     } else {
       console.log("Quantity cannot be less than 1");
     }
   };
 
+  
 
 
 
   const getTotalPriceInCart = () => {
-    let total = 0;
-    for (let i = 0; i < dataProducts?.length; i++) {
-      total += (dataProducts[i].product.unitPrice * dataProducts[i].product.quantity);
-    }
-    for (let i = 0; i < dataCombos?.length; i++) {
-      total += (dataCombos[i].combo.unitPrice * dataCombos[i].combo.quantity);
-    }
-    return total;
+    const allItems = [...dataProducts, ...dataCombos];
+    return allItems.reduce((total, item) => {
+      const unitPrice = item.product ? item.product.unitPrice : item.combo.unitPrice;
+      const quantity = item.product ? item.product.quantity : item.combo.quantity;
+      return total + unitPrice * quantity;
+    }, 0);
   };
+  
 
   const handlePlaceOrder = () => {
     if ((!dataProducts || dataProducts.length === 0) && (!dataCombos || dataCombos.length === 0)) {

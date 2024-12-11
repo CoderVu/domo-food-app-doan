@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.myappdoan"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +30,11 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "e506ef0f-6409-459b-b459-bb6d211b4e17"
+      }
+    }
   }
 }

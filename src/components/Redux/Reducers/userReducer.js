@@ -3,7 +3,7 @@ import types from "../types";
 const initialState = {
   dataProducts: [],
   dataCombos: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 

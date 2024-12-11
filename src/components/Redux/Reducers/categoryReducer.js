@@ -3,7 +3,7 @@ import types from "../types";
 
 const INITIAL_STATE = {
     dataCategories: [],
-    loading: false,
+    loading: true,
     error: null,
 };
 
@@ -25,7 +25,7 @@ const categoryReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 loading: false,
-                error: "Failed to fetch categories",
+                error: action.error,
             };
         default:
             return state;

@@ -12,7 +12,7 @@ const INITIAL_STATE = {
   ratingProduct: [],
   allDrinks: [],
   productsByCategory: {},
-  loading: false,
+  loading: true,
   error: null,
 };
 

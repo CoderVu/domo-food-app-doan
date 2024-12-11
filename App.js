@@ -25,7 +25,7 @@ const App = () => {
         <View style={{ flex: 1 }}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Home"
+              initialRouteName="login"
               screenOptions={{
                 headerShown: false,
               }}
